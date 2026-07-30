@@ -430,7 +430,59 @@ footer.site nav a:hover { color: var(--ink); }
 /* ---- Mobile (desktop layout untouched above this point) ---- */
 @media (max-width: 640px) {
   header.site .wrap { flex-direction: column; align-items: flex-start; }
-  nav.site-nav { flex-wrap: wrap; gap: 14px 18px; }
+
+  /* Nav links: real tap targets instead of bare text crammed together */
+  nav.site-nav {
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+  nav.site-nav a {
+    padding: 7px 11px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    line-height: 1;
+  }
+  nav.site-nav a:hover, nav.site-nav a[aria-current="page"] {
+    border-color: var(--accent-dim);
+  }
+
+  /* "More" toggle: looks like a button, not bare text with an arrow */
+  .nav-more summary {
+    padding: 7px 11px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    line-height: 1;
+  }
+  .nav-more-menu { right: auto; left: 0; }
+
+  /* Hero now-building: force the data-tag to its own line so it never
+     runs into the description text with no visual break */
+  .now-building { gap: 8px 14px; }
+  .now-building .data-tag { flex-basis: 100%; margin-left: 23px; }
+
+  /* Tag chips / badges: the desktop border/gap values are too subtle at
+     mobile's smaller rendered size -- stronger background + bigger gap so
+     adjacent pills read as clearly separate, not touching text */
+  .tag-filters, .card-badges, .card-tags {
+    gap: 8px;
+  }
+  .tag-chip {
+    padding: 7px 13px;
+    background: var(--paper);
+  }
+  .card-badges .data-tag {
+    background: var(--paper-2);
+    border-color: var(--border);
+    padding: 3px 9px;
+  }
+  .card-tags span {
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+  }
+
   .grid { grid-template-columns: 1fr; }
   .changelog-item {
     grid-template-columns: 1fr;
@@ -439,7 +491,6 @@ footer.site nav a:hover { color: var(--ink); }
   section.controls { flex-direction: column; align-items: stretch; }
   #search { width: 100%; }
   footer.site .wrap { flex-direction: column; align-items: flex-start; }
-  .nav-more-menu { right: auto; left: 0; }
   .grid-controls { margin-left: 0; flex-wrap: wrap; }
   .grid.compact .card { flex-direction: column; align-items: stretch; }
 }
