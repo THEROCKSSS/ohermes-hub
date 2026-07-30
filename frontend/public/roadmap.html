@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap — ohermes</title>
+<meta name="description" content="What's shipped on this hub, what's known to be broken, and what's still just an idea.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .roadmap-section { margin: 32px 0; }
+  .roadmap-section h2 { font-family: var(--font-mono); font-size: 1.05rem; margin-bottom: 12px; }
+  .roadmap-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .roadmap-list li {
+    padding: 10px 14px; background: var(--paper); border: 1px solid var(--border);
+    border-radius: 8px; font-size: 0.9rem; color: var(--ink-dim);
+  }
+  .roadmap-list li strong { color: var(--ink); }
+  .status-shipped { border-left: 3px solid var(--accent); }
+  .status-open { border-left: 3px solid var(--warn); }
+</style>
+</head>
+<body>
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Roadmap</h1>
+    <p>
+      High-level direction for this hub — distinct from the per-project
+      <a href="/#ideas">Ideas board</a>, which only ever lists things once
+      they're public on GitHub. <span class="data-tag static">NON-LIVE DATA</span>
+      — hand-written, updated when things actually change.
+    </p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+
+    <div class="roadmap-section">
+      <h2>Shipped</h2>
+      <ul class="roadmap-list">
+        <li class="status-shipped"><strong>18 pages + top nav</strong> — Now, Blog, Stack, Timeline, Uptime, API Docs, Credits, Press, Tools, Year in Review, Wishlist, Talks, License, Roadmap, Archive, Contact, plus a custom 404.</li>
+        <li class="status-shipped"><strong>Project grid enhancements</strong> — sort, random-project, compact view, per-card commit sparkline, license + open-issues badges, similar-projects cross-links, and a project detail page with the real README.</li>
+        <li class="status-shipped"><strong>Portable setup skills</strong> — four skills on <a href="/skills.html">/skills.html</a> so anyone can build their own copy, or keep this one's content current.</li>
+      </ul>
+    </div>
+
+    <div class="roadmap-section">
+      <h2>Known open issue</h2>
+      <ul class="roadmap-list">
+        <li class="status-open"><strong>Movie List's path on this domain (port 8444)</strong> is still unpublished — a Docker Desktop host-port binding got stuck during setup and survived every fix attempted (a full backend restart, a network recreate, isolation testing). Not a security issue, just not live yet. Movie List itself is unaffected and reachable through its other paths.</li>
+      </ul>
+    </div>
+
+    <div class="roadmap-section">
+      <h2>Under consideration</h2>
+      <p style="color:var(--ink-dim); font-size:0.88rem; margin-bottom:12px;">
+        From the same 100-item brainstorm that produced the pages/grid work
+        above — real ideas, not yet built, not yet approved:
+      </p>
+      <ul class="roadmap-list">
+        <li><strong>Changelog</strong> — per-project filtering, a contribution heatmap, real pagination.</li>
+        <li><strong>Visual polish</strong> — light/dark toggle, a command palette (Cmd/Ctrl+K), skeleton loading states.</li>
+        <li><strong>Data & stats</strong> — combined star count in the hero, per-repo dependency counts, aggregate language breakdown.</li>
+        <li><strong>Search & navigation</strong> — keyboard shortcuts, URL-persisted filters, fuzzy search.</li>
+        <li><strong>Content & writing</strong> — per-project "why I built this" blurbs, more blog posts.</li>
+        <li><strong>Integrations</strong> — Forgejo activity merged into the changelog, a real uptime-monitor backend instead of the hand-rolled health checks.</li>
+        <li><strong>Accessibility</strong> — full keyboard-nav audit, `prefers-reduced-motion` support, screen-reader landmark regions.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+<script src="js/partials.js"></script>
+</body>
+</html>

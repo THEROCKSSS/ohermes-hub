@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skills — ohermes</title>
+<meta name="description" content="Portable skill files for building your own copy of this hub, locally.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .skill-card { display: flex; flex-direction: column; gap: 10px; }
+  .skill-card .skill-links { display: flex; gap: 14px; font-family: var(--font-mono); font-size: 0.8rem; }
+  .skill-order { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); }
+  .skill-verified {
+    font-size: 0.78rem; color: var(--ink-dim); border-top: 1px solid var(--border);
+    padding-top: 8px; margin-top: 2px;
+  }
+  .skill-verified strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Skills</h1>
+    <p>
+      This whole hub is built from small, self-contained skill files —
+      real instructions grounded in this actual codebase, not generic advice.
+      Grab any of them and drop it into your own Claude Code
+      <code>~/.claude/skills/</code> directory (or hand it to any AI coding
+      agent) to build your own copy. <strong>Local-only</strong> — none of
+      these touch Tailscale, DuckDNS, or a real domain; that's deliberately
+      a separate step once your local copy actually works.
+    </p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="grid">
+
+      <div class="card skill-card">
+        <div class="skill-order">1. Backend / provider</div>
+        <h3>ohermes-hub-backend-provider-setup</h3>
+        <p>
+          A small FastAPI service that reads your curated repo list, enriches
+          it with live GitHub data (stars, license, open issues, commit
+          activity), and serves it as JSON. Covers caching discipline, the
+          fail-soft pattern for flaky GitHub calls, and why the README
+          endpoint has to be allowlisted.
+        </p>
+        <div class="skill-links">
+          <a href="/skills/backend-provider-setup.md">View / download →</a>
+        </div>
+        <div class="skill-verified"><strong>Tested:</strong> this is the exact code running behind <code>/api/</code> on this live hub, plus rebuilt again from scratch as half of the full-stack test below.</div>
+      </div>
+
+      <div class="card skill-card">
+        <div class="skill-order">2. Frontend webpage</div>
+        <h3>ohermes-hub-frontend-webpage-setup</h3>
+        <p>
+          Plain HTML/CSS/vanilla JS, no framework, no build step — served by
+          nginx, which proxies <code>/api/</code> to the provider. Covers the
+          one rule that matters most: never render API-sourced content with
+          <code>innerHTML</code>. Also covers the shared nav/footer partial
+          pattern so you're not duplicating navigation across every page.
+        </p>
+        <div class="skill-links">
+          <a href="/skills/frontend-webpage-setup.md">View / download →</a>
+        </div>
+        <div class="skill-verified"><strong>Tested:</strong> browser-verified on this live hub (real DOM checks, not just HTTP status codes) — search, sort, compact view, and the nav all confirmed working in an actual browser session.</div>
+      </div>
+
+      <div class="card skill-card">
+        <div class="skill-order">3. All together</div>
+        <h3>ohermes-hub-full-stack-setup</h3>
+        <p>
+          The combined walkthrough — directory layout, build order, the
+          <code>docker-compose.yml</code> that ties both services together,
+          and a real verification pass. Ends with a working
+          <code>http://localhost:8500/</code>, on purpose, and nothing more.
+        </p>
+        <div class="skill-links">
+          <a href="/skills/full-stack-setup.md">View / download →</a>
+        </div>
+        <div class="skill-verified"><strong>Tested:</strong> followed literally in a separate scratch directory (not copy-pasted from the real project) — came up clean and pulled real GitHub data on the first try.</div>
+      </div>
+
+      <div class="card skill-card">
+        <div class="skill-order">4. Ongoing maintenance</div>
+        <h3>ohermes-hub-content-refresh</h3>
+        <p>
+          The periodic pass for keeping the curated project list current —
+          finding new public repos to add, catching ones that went private
+          or got deleted, and rewriting stale descriptions. Not a cron job;
+          a checklist for when you remember, or just pushed something new.
+        </p>
+        <div class="skill-links">
+          <a href="/skills/content-refresh.md">View / download →</a>
+        </div>
+        <div class="skill-verified"><strong>Tested:</strong> its exact <code>gh repo list</code> / <code>gh api readme</code> commands are the same ones actually used to curate this hub's real 13-project list.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="projects" style="border-top:1px solid var(--border); padding-top:36px;">
+  <div class="wrap">
+    <div class="section-head"><h2>Workflow automation</h2></div>
+    <p style="color:var(--ink-dim); font-size:0.9rem; margin-bottom:20px;">
+      Different from the four above — these don't set anything up, they keep
+      the <a href="/wishlist.html">Wishlist</a>, <a href="/talks.html">Talks</a>,
+      and <a href="/press.html">Press</a> pages current as part of normal
+      day-to-day work, instead of needing a separate "go update the site"
+      request every time. Each one drafts an entry from real activity and
+      confirms before anything actually publishes.
+    </p>
+    <div class="grid">
+
+      <div class="card skill-card">
+        <h3>ohermes-wishlist-logger</h3>
+        <p>Triggers when research is done with buying/acquiring something as the actual goal — logs what was found, not just that a search happened.</p>
+        <div class="skill-links">
+          <a href="/skills/wishlist-logger.md">View / download →</a>
+        </div>
+      </div>
+
+      <div class="card skill-card">
+        <h3>ohermes-talks-logger</h3>
+        <p>Triggers after a genuinely substantive discussion or exploration of an idea, model, or technology — not a passing mention.</p>
+        <div class="skill-links">
+          <a href="/skills/talks-logger.md">View / download →</a>
+        </div>
+      </div>
+
+      <div class="card skill-card">
+        <h3>ohermes-press-logger</h3>
+        <p>Triggers once a model test or workflow experiment has actually concluded with a real result worth sharing.</p>
+        <div class="skill-links">
+          <a href="/skills/press-logger.md">View / download →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+</body>
+</html>

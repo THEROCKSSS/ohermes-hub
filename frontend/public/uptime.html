@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uptime — ohermes</title>
+<meta name="description" content="Which self-hosted services are currently reachable.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .uptime-list { display: flex; flex-direction: column; gap: 8px; }
+  .uptime-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; background: var(--paper); border: 1px solid var(--border);
+    border-radius: 8px; font-family: var(--font-mono); font-size: 0.9rem;
+  }
+  .uptime-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .uptime-dot.up { background: var(--accent); box-shadow: 0 0 0 3px oklch(0.78 0.16 150 / 0.18); }
+  .uptime-dot.down { background: var(--warn); box-shadow: 0 0 0 3px oklch(0.75 0.15 60 / 0.18); }
+  .uptime-name { flex: 1; color: var(--ink); }
+  .uptime-latency { color: var(--ink-dim); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Uptime</h1>
+    <p>
+      Real health checks against the self-hosted services this hub sits
+      alongside — never the PIN-gated content itself, just whether the
+      front door answers. <span class="data-tag live">LIVE DATA</span>
+    </p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="uptime-list" id="uptime-list">
+      <p class="empty-state">Checking…</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/uptime").then(function (r) { return r.json(); }).then(function (data) {
+    var list = document.getElementById("uptime-list");
+    list.textContent = "";
+    (data.services || []).forEach(function (s) {
+      var row = el("div", { className: "uptime-row" });
+      row.appendChild(el("span", { className: "uptime-dot " + (s.up ? "up" : "down") }));
+      row.appendChild(el("span", { className: "uptime-name", text: s.name }));
+      var status = s.up ? (s.latency_ms + "ms") : "unreachable";
+      row.appendChild(el("span", { className: "uptime-latency", text: status }));
+      list.appendChild(row);
+    });
+  }).catch(function () {
+    document.getElementById("uptime-list").textContent = "";
+    document.getElementById("uptime-list").appendChild(
+      el("p", { className: "empty-state", text: "Couldn't run health checks right now." })
+    );
+  });
+})();
+</script>
+</body>
+</html>

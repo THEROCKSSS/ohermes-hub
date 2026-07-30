@@ -1,0 +1,93 @@
+[
+  {
+    "repo": "sorted-iptv",
+    "owner": "THEROCKSSS",
+    "name": "Sorted IPTV",
+    "description": "Free-to-air IPTV streams from iptv-org, sorted by language and category, with an in-browser player and ready-made .m3u playlists.",
+    "tags": ["HTML", "media"]
+  },
+  {
+    "repo": "smart-bulb-dashboard",
+    "owner": "THEROCKSSS",
+    "name": "Smart Bulb Dashboard",
+    "description": "Local, cloud-independent dashboard and REST API for controlling Tuya-based Wi-Fi smart bulbs (RGB+CCT). 97 features, vanilla-JS frontend with a FastAPI backend.",
+    "tags": ["Python", "home-automation"]
+  },
+  {
+    "repo": "Cap-s-Movie-List",
+    "owner": "THEROCKSSS",
+    "name": "Cap's Movie List",
+    "description": "A dark-mode, terminal-aesthetic movie browser blending a curated personal list with live TMDB data — Now Playing, Popular, Recent Releases, and full-catalog search. Single-file, no-build-step GitHub Pages deploy.",
+    "tags": ["HTML", "media"]
+  },
+  {
+    "repo": "hermes-skills-portfolio",
+    "owner": "THEROCKSSS",
+    "name": "Hermes Skills Portfolio",
+    "description": "Empowering skills for the Hermes agent — install one, your agent can now do that for you.",
+    "tags": ["HTML", "ai-tooling"]
+  },
+  {
+    "repo": "tailscale-deploy",
+    "owner": "THEROCKSSS",
+    "name": "Tailscale Deploy",
+    "description": "Deploy a service on your Tailscale tailnet so it's privately accessible from any of your devices.",
+    "tags": ["infra"]
+  },
+  {
+    "repo": "openconcho",
+    "owner": "THEROCKSSS",
+    "name": "OpenConcho",
+    "description": "Fast, privacy-first desktop and web UI for self-hosted Honcho — browse memories, peers, sessions, conclusions, and chat with memory context.",
+    "tags": ["TypeScript", "ai-tooling"]
+  },
+  {
+    "repo": "lunarpup",
+    "owner": "THEROCKSSS",
+    "name": "Lunar Pup Skater 3D",
+    "description": "A React Three Fiber moon-skating game with procedural chunked terrain. Boost over ridges and land aerial spins for points, with optional WebSocket multiplayer.",
+    "tags": ["TypeScript", "game"]
+  },
+  {
+    "repo": "VR-Chat-Links-Customizable-Link-tree",
+    "owner": "THEROCKSSS",
+    "name": "VRChat Link Tree",
+    "description": "A customizable link tree built for VRChat profile links.",
+    "tags": ["HTML", "vrchat"]
+  },
+  {
+    "repo": "Open-source-link-treee",
+    "owner": "THEROCKSSS",
+    "name": "Futuristic Link Tree",
+    "description": "A multi-template link tree platform with 5+ neon/cyberpunk designs, aimed at VRChat, Discord, and Twitch communities. JSON-configurable, GitHub Pages deployable.",
+    "tags": ["HTML", "vrchat"]
+  },
+  {
+    "repo": "Online-slash-offline-A-free-Github-resource-pages",
+    "owner": "THEROCKSSS",
+    "name": "Maskith Repository",
+    "description": "A curated hub of 1000+ free and open-source resources for developers — AI tools, file management, gaming, and design tools — organized into multi-page categories.",
+    "tags": ["HTML", "resources"]
+  },
+  {
+    "repo": "AI_SMF_CODE",
+    "owner": "THEROCKSSS",
+    "name": "AI SMF Code",
+    "description": "A combination of Super Factory Manager codes made with AI or sourced (with credit) from elsewhere, spanning multiple mods.",
+    "tags": ["HTML", "gaming-mod"]
+  },
+  {
+    "repo": "DXRULES",
+    "owner": "THEROCKSSS",
+    "name": "TROGLODYTES Rules",
+    "description": "The official TROGLODYTES community ruleset page, built for the s&box game.",
+    "tags": ["HTML", "gaming-community"]
+  },
+  {
+    "repo": "VRCATAPI",
+    "owner": "THEROCKSSS",
+    "name": "VRCatAPI",
+    "description": "An assortment of tools for calling the VRChat API.",
+    "tags": ["Python", "vrchat"]
+  }
+]

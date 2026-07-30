@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog — ohermes</title>
+<meta name="description" content="Write-ups about specific builds and fixes.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Blog</h1>
+    <p>Longer write-ups about specific builds — real accounts of real work, not marketing copy. <span class="data-tag live">LIVE DATA</span></p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="grid" id="blog-grid">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/blog").then(function (r) { return r.json(); }).then(function (data) {
+    var grid = document.getElementById("blog-grid");
+    grid.textContent = "";
+    var entries = data.entries || [];
+    if (!entries.length) {
+      grid.appendChild(el("p", { className: "empty-state", text: "Nothing posted yet." }));
+      return;
+    }
+    entries.forEach(function (e) {
+      var card = el("div", { className: "card" });
+      var h3 = el("h3");
+      var a = el("a", { text: e.title });
+      a.href = "/blog-post.html?slug=" + encodeURIComponent(e.slug);
+      h3.appendChild(a);
+      card.appendChild(h3);
+      card.appendChild(el("p", { text: e.summary }));
+      var meta = el("div", { className: "card-meta" });
+      meta.appendChild(el("span", { text: e.date }));
+      card.appendChild(meta);
+      grid.appendChild(card);
+    });
+  }).catch(function () {
+    var grid = document.getElementById("blog-grid");
+    grid.textContent = "";
+    grid.appendChild(el("p", { className: "empty-state", text: "Couldn't load the blog right now." }));
+  });
+})();
+</script>
+</body>
+</html>

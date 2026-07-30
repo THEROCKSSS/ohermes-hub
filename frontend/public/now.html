@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Now — ohermes</title>
+<meta name="description" content="What's actively being worked on right now.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Right now</h1>
+    <p>
+      A <a href="https://nownownow.com/about" target="_blank" rel="noopener noreferrer">"now page"</a>
+      — what's actually getting worked on at the moment, not a highlight reel.
+      Computed from real GitHub activity below; nothing here is invented.
+      <span class="data-tag live">LIVE DATA</span>
+    </p>
+    <div class="now-building" id="now-building" hidden>
+      <span class="dot" aria-hidden="true"></span>
+      <span class="label">Most recently pushed</span>
+      <strong id="now-building-name">—</strong>
+    </div>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="section-head"><h2>Most active right now</h2></div>
+    <div class="grid" id="active-grid">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/projects").then(function (r) { return r.json(); }).then(function (data) {
+    var projects = (data.projects || []).filter(function (p) { return p.pushed_at; });
+    var grid = document.getElementById("active-grid");
+    grid.textContent = "";
+    if (!projects.length) {
+      grid.appendChild(el("p", { className: "empty-state", text: "No live data available right now." }));
+      return;
+    }
+    var top = projects.slice(0, 5);
+    document.getElementById("now-building-name").textContent = top[0].name;
+    document.getElementById("now-building").hidden = false;
+    top.forEach(function (p) {
+      var card = el("div", { className: "card" });
+      var h3 = el("h3");
+      var a = el("a", { text: p.name });
+      a.href = p.github_url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      h3.appendChild(a);
+      card.appendChild(h3);
+      card.appendChild(el("p", { text: p.description }));
+      grid.appendChild(card);
+    });
+  }).catch(function () {
+    document.getElementById("active-grid").textContent = "";
+    document.getElementById("active-grid").appendChild(
+      el("p", { className: "empty-state", text: "Couldn't load activity right now." })
+    );
+  });
+})();
+</script>
+</body>
+</html>

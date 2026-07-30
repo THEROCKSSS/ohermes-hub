@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ohermes — project hub</title>
+<meta name="description" content="What's currently being built, and the changelog behind it.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>What's actually going on here</h1>
+    <p>
+      A running index of the projects that are actually shipped and public —
+      pulled straight from GitHub, not a curated highlight reel. If it's
+      listed below, it's real and you can go read the code.
+    </p>
+    <div class="now-building" id="now-building" hidden>
+      <span class="dot" aria-hidden="true"></span>
+      <span class="label">Most recently pushed</span>
+      <strong id="now-building-name">—</strong>
+      <span class="data-tag live" id="now-building-tag">LIVE DATA</span>
+    </div>
+  </div>
+</section>
+
+<section class="controls wrap" id="projects">
+  <input type="search" id="search" placeholder="Search projects…" aria-label="Search projects">
+  <div class="tag-filters" id="tag-filters" role="group" aria-label="Filter by tag"></div>
+  <div class="grid-controls">
+    <select id="sort-select" aria-label="Sort projects">
+      <option value="recent">Most recent</option>
+      <option value="stars">Most stars</option>
+      <option value="alpha">Alphabetical</option>
+    </select>
+    <button type="button" id="view-toggle" aria-pressed="false">Compact view</button>
+    <button type="button" id="random-project">Random project →</button>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="grid" id="project-grid">
+      <p class="empty-state">Loading projects…</p>
+    </div>
+    <p class="no-results" id="no-results" hidden>No projects match that search/filter.</p>
+  </div>
+</section>
+
+<section class="changelog" id="changelog">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Changelog</h2>
+      <a class="rss-link" href="/api/changelog.rss">RSS feed →</a>
+    </div>
+    <div class="changelog-list" id="changelog-list">
+      <p class="empty-state">Loading recent activity…</p>
+    </div>
+  </div>
+</section>
+
+<section class="ideas" id="ideas">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Ideas</h2>
+    </div>
+    <p style="color:var(--ink-dim); font-size:0.88rem; margin-bottom:14px;">
+      Things being considered, not yet built — clearly separate from the real,
+      shipped project grid above. <span class="data-tag live">LIVE DATA</span>
+    </p>
+    <div id="ideas-list">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+<script src="js/app.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/ideas").then(function (r) { return r.json(); }).then(function (data) {
+    var box = document.getElementById("ideas-list");
+    box.textContent = "";
+    var entries = data.entries || [];
+    if (!entries.length) {
+      box.appendChild(el("div", { className: "ideas-box", text: "Nothing queued right now." }));
+      return;
+    }
+    entries.forEach(function (e) {
+      var item = el("div", { className: "ideas-box" });
+      item.style.textAlign = "left";
+      item.appendChild(el("h3", { text: e.name }));
+      item.appendChild(el("p", { text: e.description }));
+      box.appendChild(item);
+    });
+  }).catch(function () {
+    var box = document.getElementById("ideas-list");
+    box.textContent = "";
+    box.appendChild(el("div", { className: "ideas-box", text: "Couldn't load ideas right now." }));
+  });
+})();
+</script>
+</body>
+</html>

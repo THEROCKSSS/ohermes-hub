@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Docs — ohermes</title>
+<meta name="description" content="Public read-only endpoints this hub exposes.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .endpoint { padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .endpoint code.path { font-family: var(--font-mono); color: var(--accent); font-size: 0.95rem; }
+  .endpoint p { color: var(--ink-dim); margin: 6px 0 0; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>API docs</h1>
+    <p>
+      Every endpoint this hub exposes — all read-only, all public, no auth.
+      The frontend on this same site is the primary consumer, but nothing
+      stops you hitting these directly.
+    </p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="endpoint">
+      <code class="path">GET /api/projects</code>
+      <p>Curated project list enriched with live GitHub data — stars, license, open issues, creation/push dates, and a 13-week commit sparkline. Cached 10 minutes.</p>
+    </div>
+    <div class="endpoint">
+      <code class="path">GET /api/projects/{repo}/readme</code>
+      <p>Raw README text (not markdown-rendered) for one curated repo.</p>
+    </div>
+    <div class="endpoint">
+      <code class="path">GET /api/changelog</code>
+      <p>Recent commits across every listed repo, newest first. Cached 10 minutes.</p>
+    </div>
+    <div class="endpoint">
+      <code class="path">GET /api/changelog.rss</code>
+      <p>The same data as an RSS 2.0 feed.</p>
+    </div>
+    <div class="endpoint">
+      <code class="path">GET /api/uptime</code>
+      <p>Live health checks against the self-hosted services this hub sits alongside. Cached 60 seconds.</p>
+    </div>
+    <div class="endpoint">
+      <code class="path">GET /api/health</code>
+      <p>Machine-readable status for this hub itself — for external uptime monitors.</p>
+    </div>
+    <div class="endpoint">
+      <code class="path">GET /api/status</code>
+      <p>Minimal liveness check.</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+</body>
+</html>

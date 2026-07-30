@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Press — ohermes</title>
+<meta name="description" content="Results from model tests and workflow experiments, once they're done.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .press-item {
+    padding: 18px 20px; background: var(--paper); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 12px;
+  }
+  .press-item h3 { margin: 0 0 4px; font-size: 1.05rem; }
+  .press-item time { font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-dim); }
+  .press-item p { margin: 8px 0 0; color: var(--ink-dim); font-size: 0.9rem; }
+  .press-body { white-space: pre-wrap; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div id="nav-slot"></div>
+<section class="hero">
+  <div class="wrap">
+    <h1>Press</h1>
+    <p>
+      Results once model tests or workflow experiments are actually done —
+      what was tried, what came of it, and what it changes about how these
+      projects get built. <span class="data-tag static">NON-LIVE DATA</span>
+    </p>
+  </div>
+</section>
+<section class="projects">
+  <div class="wrap" id="press-list">
+    <p class="empty-state">Loading…</p>
+  </div>
+</section>
+<div id="footer-slot"></div>
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/press").then(function (r) { return r.json(); }).then(function (data) {
+    var box = document.getElementById("press-list");
+    box.textContent = "";
+    var entries = data.entries || [];
+    if (!entries.length) {
+      box.appendChild(el("div", { className: "ideas-box", text: "Nothing to show yet." }));
+      return;
+    }
+    entries.forEach(function (e) {
+      var item = el("div", { className: "press-item" });
+      item.appendChild(el("h3", { text: e.title }));
+      item.appendChild(el("time", { text: e.date }));
+      item.appendChild(el("p", { text: e.summary }));
+      if (e.body) item.appendChild(el("div", { className: "press-body", text: e.body }));
+      box.appendChild(item);
+    });
+  }).catch(function () {
+    var box = document.getElementById("press-list");
+    box.textContent = "";
+    box.appendChild(el("div", { className: "ideas-box", text: "Couldn't load press right now." }));
+  });
+})();
+</script>
+</body>
+</html>

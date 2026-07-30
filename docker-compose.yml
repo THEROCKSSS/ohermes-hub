@@ -1,0 +1,29 @@
+# ohermes-hub -- public project index for ohermes.duckdns.org
+#
+# LOCAL TESTING ONLY at this stage: bound to host port 8500, not wired into
+# the real custom-domains Caddyfile yet. Test at http://localhost:8500/
+# first; production deployment (replacing DXRP docs at ohermes.duckdns.org
+# root, moving DXRP docs to /docs) happens only after explicit approval.
+
+services:
+  hub-api:
+    build: ./backend
+    container_name: hub-api
+    restart: unless-stopped
+    # No published port -- only hub-frontend talks to it, over the compose
+    # network. No secrets/env vars needed: uses GitHub's public,
+    # unauthenticated API with a 10-minute cache to stay well under its
+    # rate limit.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # needed for /api/uptime's real health checks
+
+  hub-frontend:
+    build: ./frontend
+    container_name: hub-frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8500:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - hub-api

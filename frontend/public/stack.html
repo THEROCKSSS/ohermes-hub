@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stack — ohermes</title>
+<meta name="description" content="The actual tools and versions behind this hub and the projects on it.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>What this runs on</h1>
+    <p>
+      The real infrastructure behind this site, with real version numbers.
+      <span class="data-tag static">NON-LIVE DATA</span> — static page,
+      updated by hand when the stack changes.
+    </p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="section-head"><h2>This hub, specifically</h2></div>
+    <div class="grid">
+      <div class="card">
+        <h3>FastAPI 0.115.0</h3>
+        <p>Backend framework for the GitHub-data proxy/cache (<code>/api/*</code>).</p>
+      </div>
+      <div class="card">
+        <h3>uvicorn 0.30.6</h3>
+        <p>ASGI server running the FastAPI app.</p>
+      </div>
+      <div class="card">
+        <h3>httpx 0.27.2</h3>
+        <p>Async HTTP client the backend uses to call GitHub's public API.</p>
+      </div>
+      <div class="card">
+        <h3>Python 3.12 (slim)</h3>
+        <p>Backend container base image.</p>
+      </div>
+      <div class="card">
+        <h3>nginx (alpine)</h3>
+        <p>Serves the static frontend and reverse-proxies <code>/api/</code>, <code>/docs</code>, <code>/forgejo/</code>.</p>
+      </div>
+      <div class="card">
+        <h3>Docker Compose</h3>
+        <p>Two containers — <code>hub-frontend</code> and <code>hub-api</code> — no shared runtime.</p>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:36px"><h2>The wider setup</h2></div>
+    <div class="grid">
+      <div class="card">
+        <h3>Caddy</h3>
+        <p>Reverse proxy + TLS for the domains this hub and its siblings sit behind. Real Let's Encrypt certs via DNS-01 (DuckDNS) — see the <code>caddy-dns-duck</code> skill for exactly how.</p>
+      </div>
+      <div class="card">
+        <h3>DuckDNS</h3>
+        <p>Free dynamic DNS for every domain in this setup.</p>
+      </div>
+      <div class="card">
+        <h3>Tailscale</h3>
+        <p>Private mesh networking — most self-hosted projects here are also reachable over a private tailnet, no public exposure required.</p>
+      </div>
+      <div class="card">
+        <h3>Forgejo</h3>
+        <p>Self-hosted Git + issues, used for cross-project work.</p>
+      </div>
+      <div class="card">
+        <h3>Windows + WSL2</h3>
+        <p>Host OS for the Docker Desktop backend running all of this.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+</body>
+</html>

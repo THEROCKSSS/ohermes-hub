@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wishlist — ohermes</title>
+<meta name="description" content="Tools, hardware, or software currently being researched or considered.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .wl-item {
+    padding: 14px 16px; background: var(--paper); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 8px;
+  }
+  .wl-item h3 { margin: 0 0 4px; font-size: 1rem; display: flex; align-items: center; }
+  .wl-item p { margin: 4px 0 0; color: var(--ink-dim); font-size: 0.88rem; }
+  .wl-status {
+    font-family: var(--font-mono); font-size: 0.7rem; padding: 2px 8px;
+    border-radius: 5px; border: 1px solid var(--border); color: var(--ink-dim); margin-left: 8px;
+  }
+  .wl-status.researching { color: var(--accent); border-color: var(--accent-dim); }
+  .wl-status.bought { color: var(--ink); border-color: var(--ink-dim); }
+</style>
+</head>
+<body>
+<div id="nav-slot"></div>
+<section class="hero">
+  <div class="wrap">
+    <h1>Wishlist</h1>
+    <p>Tools, hardware, or software actually being researched or considered right now. <span class="data-tag static">NON-LIVE DATA</span></p>
+  </div>
+</section>
+<section class="projects">
+  <div class="wrap" id="wl-list">
+    <p class="empty-state">Loading…</p>
+  </div>
+</section>
+<div id="footer-slot"></div>
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/wishlist").then(function (r) { return r.json(); }).then(function (data) {
+    var box = document.getElementById("wl-list");
+    box.textContent = "";
+    var entries = data.entries || [];
+    if (!entries.length) {
+      box.appendChild(el("div", { className: "ideas-box", text: "Nothing being actively looked for right now." }));
+      return;
+    }
+    entries.forEach(function (e) {
+      var item = el("div", { className: "wl-item" });
+      var h3 = el("h3", { text: e.item });
+      var status = el("span", { className: "wl-status " + (e.status || ""), text: e.status || "" });
+      h3.appendChild(status);
+      item.appendChild(h3);
+      item.appendChild(el("p", { text: e.why }));
+      if (e.notes) item.appendChild(el("p", { text: e.notes }));
+      box.appendChild(item);
+    });
+  }).catch(function () {
+    var box = document.getElementById("wl-list");
+    box.textContent = "";
+    box.appendChild(el("div", { className: "ideas-box", text: "Couldn't load the wishlist right now." }));
+  });
+})();
+</script>
+</body>
+</html>

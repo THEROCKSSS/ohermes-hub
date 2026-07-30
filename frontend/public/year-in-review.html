@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Year in Review — ohermes</title>
+<meta name="description" content="This year's projects, computed from real GitHub data.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .stat-row { display: flex; gap: 24px; flex-wrap: wrap; margin: 24px 0; }
+  .stat { text-align: left; }
+  .stat .num { font-family: var(--font-mono); font-size: 2rem; color: var(--accent); }
+  .stat .label { color: var(--ink-dim); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 id="year-heading">This year</h1>
+    <p>Computed from real GitHub data for the listed projects. <span class="data-tag live">LIVE DATA</span> — not a full account-wide stat, just what's on this hub.</p>
+    <div class="stat-row" id="stats"></div>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="section-head"><h2>Created this year</h2></div>
+    <div class="grid" id="this-year-grid">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  var thisYear = new Date().getFullYear().toString();
+  document.getElementById("year-heading").textContent = thisYear + " in review";
+
+  fetch("/api/projects").then(function (r) { return r.json(); }).then(function (data) {
+    var projects = data.projects || [];
+    var createdThisYear = projects.filter(function (p) { return p.created_at && p.created_at.slice(0, 4) === thisYear; });
+    var totalStars = projects.reduce(function (sum, p) { return sum + (typeof p.stars === "number" ? p.stars : 0); }, 0);
+
+    var statsEl = document.getElementById("stats");
+    statsEl.textContent = "";
+    [
+      [createdThisYear.length, "New projects"],
+      [projects.length, "Total listed"],
+      [totalStars, "Combined stars"],
+    ].forEach(function (pair) {
+      var s = el("div", { className: "stat" });
+      s.appendChild(el("div", { className: "num", text: String(pair[0]) }));
+      s.appendChild(el("div", { className: "label", text: pair[1] }));
+      statsEl.appendChild(s);
+    });
+
+    var grid = document.getElementById("this-year-grid");
+    grid.textContent = "";
+    if (!createdThisYear.length) {
+      grid.appendChild(el("p", { className: "empty-state", text: "Nothing new created this year yet." }));
+      return;
+    }
+    createdThisYear.forEach(function (p) {
+      var card = el("div", { className: "card" });
+      var h3 = el("h3");
+      var a = el("a", { text: p.name });
+      a.href = p.github_url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      h3.appendChild(a);
+      card.appendChild(h3);
+      card.appendChild(el("p", { text: p.description }));
+      grid.appendChild(card);
+    });
+  }).catch(function () {
+    document.getElementById("this-year-grid").textContent = "";
+    document.getElementById("this-year-grid").appendChild(
+      el("p", { className: "empty-state", text: "Couldn't load this year's data right now." })
+    );
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talks — ohermes</title>
+<meta name="description" content="Discussions and explorations of ideas, models, or particular technologies.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .talk-item {
+    padding: 14px 16px; background: var(--paper); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 8px;
+  }
+  .talk-item h3 { margin: 0 0 4px; font-size: 1rem; }
+  .talk-item time { font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-dim); }
+  .talk-item p { margin: 4px 0 0; color: var(--ink-dim); font-size: 0.88rem; }
+  .talk-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .talk-tags span { background: var(--paper-2); border-radius: 4px; padding: 2px 7px; font-size: 0.74rem; color: var(--ink-dim); }
+</style>
+</head>
+<body>
+<div id="nav-slot"></div>
+<section class="hero">
+  <div class="wrap">
+    <h1>Talks</h1>
+    <p>Discussions and explorations of particular ideas, models, or technologies — not formal presentations, just real conversations worth a record. <span class="data-tag static">NON-LIVE DATA</span></p>
+  </div>
+</section>
+<section class="projects">
+  <div class="wrap" id="talks-list">
+    <p class="empty-state">Loading…</p>
+  </div>
+</section>
+<div id="footer-slot"></div>
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/talks").then(function (r) { return r.json(); }).then(function (data) {
+    var box = document.getElementById("talks-list");
+    box.textContent = "";
+    var entries = data.entries || [];
+    if (!entries.length) {
+      box.appendChild(el("div", { className: "ideas-box", text: "Nothing logged yet." }));
+      return;
+    }
+    entries.forEach(function (e) {
+      var item = el("div", { className: "talk-item" });
+      var h3 = el("h3", { text: e.topic });
+      item.appendChild(h3);
+      var time = el("time", { text: e.date });
+      item.appendChild(time);
+      item.appendChild(el("p", { text: e.summary }));
+      if (e.tags && e.tags.length) {
+        var tagsWrap = el("div", { className: "talk-tags" });
+        e.tags.forEach(function (t) { tagsWrap.appendChild(el("span", { text: t })); });
+        item.appendChild(tagsWrap);
+      }
+      box.appendChild(item);
+    });
+  }).catch(function () {
+    var box = document.getElementById("talks-list");
+    box.textContent = "";
+    box.appendChild(el("div", { className: "ideas-box", text: "Couldn't load talks right now." }));
+  });
+})();
+</script>
+</body>
+</html>

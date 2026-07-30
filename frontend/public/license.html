@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>License — ohermes</title>
+<meta name="description" content="Licensing terms across the listed projects.">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .license-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.92rem;
+  }
+  .license-row a { color: var(--ink); text-decoration: none; }
+  .license-row a:hover { color: var(--accent); }
+  .license-badge {
+    font-family: var(--font-mono); font-size: 0.74rem; padding: 2px 9px;
+    border-radius: 5px; border: 1px solid var(--border); color: var(--ink-dim); white-space: nowrap;
+  }
+  .license-badge.mit { color: var(--accent); border-color: var(--accent-dim); }
+</style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>License</h1>
+    <p>
+      Real per-repo licensing, pulled live from GitHub. Where nothing is
+      shown, no license file is registered on that repo — meaning default
+      copyright applies (all rights reserved) unless the repo itself says
+      otherwise. <span class="data-tag live">LIVE DATA</span>
+    </p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div id="license-list">
+      <p class="empty-state">Loading…</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  fetch("/api/projects").then(function (r) { return r.json(); }).then(function (data) {
+    var list = document.getElementById("license-list");
+    list.textContent = "";
+    (data.projects || []).forEach(function (p) {
+      var row = el("div", { className: "license-row" });
+      var a = el("a", { text: p.name });
+      a.href = p.github_url; a.target = "_blank"; a.rel = "noopener noreferrer";
+      row.appendChild(a);
+      var label = p.license && p.license !== "NOASSERTION" ? p.license
+        : (p.license === "NOASSERTION" ? "custom / no SPDX match" : "none registered");
+      var badge = el("span", {
+        className: "license-badge" + (p.license === "MIT" ? " mit" : ""),
+        text: label,
+      });
+      row.appendChild(badge);
+      list.appendChild(row);
+    });
+  }).catch(function () {
+    document.getElementById("license-list").textContent = "";
+    document.getElementById("license-list").appendChild(
+      el("p", { className: "empty-state", text: "Couldn't load license data right now." })
+    );
+  });
+})();
+</script>
+</body>
+</html>

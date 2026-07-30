@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project — ohermes</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .readme {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--ink-dim);
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .project-meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 24px; }
+</style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 id="p-name">Loading…</h1>
+    <p id="p-description"></p>
+    <div class="project-meta-row" id="p-meta"></div>
+    <p><a id="p-github" href="#" target="_blank" rel="noopener noreferrer">View on GitHub →</a></p>
+  </div>
+</section>
+
+<section class="projects">
+  <div class="wrap">
+    <div class="section-head"><h2>README</h2></div>
+    <div class="readme" id="p-readme">Loading…</div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="js/partials.js"></script>
+<script>
+(function () {
+  "use strict";
+  function el(tag, opts) {
+    var n = document.createElement(tag);
+    if (opts && opts.text !== undefined) n.textContent = opts.text;
+    if (opts && opts.className) n.className = opts.className;
+    return n;
+  }
+  var params = new URLSearchParams(window.location.search);
+  var repo = params.get("repo");
+  if (!repo) {
+    document.getElementById("p-name").textContent = "No project specified";
+    document.getElementById("p-readme").textContent = "";
+    return;
+  }
+
+  fetch("/api/projects").then(function (r) { return r.json(); }).then(function (data) {
+    var match = (data.projects || []).find(function (p) { return p.repo === repo; });
+    if (!match) {
+      document.getElementById("p-name").textContent = "Project not found";
+      return;
+    }
+    document.title = match.name + " — ohermes";
+    document.getElementById("p-name").textContent = match.name;
+    document.getElementById("p-description").textContent = match.description;
+    document.getElementById("p-github").href = match.github_url;
+
+    var meta = document.getElementById("p-meta");
+    meta.textContent = "";
+    (match.tags || []).forEach(function (t) {
+      meta.appendChild(el("span", { className: "data-tag", text: t }));
+    });
+    if (typeof match.stars === "number") {
+      meta.appendChild(el("span", { className: "data-tag live", text: "★ " + match.stars }));
+    }
+    if (match.license) {
+      meta.appendChild(el("span", { className: "data-tag", text: match.license === "NOASSERTION" ? "custom license" : match.license }));
+    }
+  }).catch(function () {
+    document.getElementById("p-name").textContent = "Couldn't load project data";
+  });
+
+  // README is deliberately shown as plain text, never markdown-rendered --
+  // avoids any HTML-injection risk from repo content reaching the DOM.
+  fetch("/api/projects/" + encodeURIComponent(repo) + "/readme")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var box = document.getElementById("p-readme");
+      box.textContent = data.available ? data.content : "No README available.";
+    })
+    .catch(function () {
+      document.getElementById("p-readme").textContent = "Couldn't load the README right now.";
+    });
+})();
+</script>
+</body>
+</html>
