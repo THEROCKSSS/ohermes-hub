@@ -149,12 +149,15 @@ async def get_projects():
         "projects": enriched,
     }
 
-    if not live_data_available and _cache["projects"] is not None:
+    if not live_data_available:
         # Every single live fetch failed this round (most likely GitHub's
-        # rate limit) -- keep serving the last known-good snapshot instead
-        # of clobbering it with an all-empty result. Retry soon rather than
-        # waiting out the full cache TTL, since this state should self-heal
-        # once the rate limit window resets.
+        # rate limit, or a cold-start race right after container startup).
+        # If we have a prior good snapshot, keep serving it instead of
+        # clobbering it with an all-empty result. Either way, retry soon
+        # rather than waiting out the full cache TTL -- this state should
+        # self-heal once the rate limit window resets or the race clears.
+        if _cache["projects"] is None:
+            _cache["projects"] = result
         _cache["projects_ts"] = now - CACHE_TTL_SECONDS + DEGRADED_RETRY_SECONDS
         return _cache["projects"]
 
@@ -238,13 +241,17 @@ async def get_changelog():
         return _cache["changelog"]
 
     entries = await fetch_changelog_entries()
-    if not entries and _cache["changelog"] is not None:
+    if not entries:
         # Same reasoning as /api/projects: an empty refresh (rate limit,
-        # transient GitHub failure) shouldn't blank out a previously good feed.
+        # transient GitHub failure, or a cold-start race) shouldn't blank
+        # out a previously good feed, and shouldn't poison a cold cache
+        # for the full TTL either -- retry soon either way.
+        if _cache["changelog"] is None:
+            _cache["changelog"] = {"generated_at": int(now), "live": False, "entries": []}
         _cache["changelog_ts"] = now - CACHE_TTL_SECONDS + DEGRADED_RETRY_SECONDS
         return _cache["changelog"]
 
-    result = {"generated_at": int(now), "live": len(entries) > 0, "entries": entries}
+    result = {"generated_at": int(now), "live": True, "entries": entries}
     _cache["changelog"] = result
     _cache["changelog_ts"] = now
     return result

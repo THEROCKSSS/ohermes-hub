@@ -489,7 +489,10 @@ footer.site nav a:hover { color: var(--ink); }
     gap: 4px;
   }
   section.controls { flex-direction: column; align-items: stretch; }
-  #search { width: 100%; }
+  /* #search's flex: 1 1 260px sets a horizontal flex-basis on desktop's
+     row layout; once controls switches to flex-direction: column above,
+     that same 260px becomes a *height* instead, ballooning the input. */
+  #search { width: 100%; flex-basis: auto; }
   footer.site .wrap { flex-direction: column; align-items: flex-start; }
   .grid-controls { margin-left: 0; flex-wrap: wrap; }
   .grid.compact .card { flex-direction: column; align-items: stretch; }
