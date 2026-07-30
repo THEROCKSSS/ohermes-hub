@@ -137,6 +137,101 @@ Lower risk, lower urgency than Phases 1–3, worth batching together:
    Forgejo activity into the same changelog feed per `roadmap.html`'s own
    "Integrations" line — real cross-platform activity, not just GitHub.
 
+## Phase 6 — Testing & CI
+
+This project currently has **zero tests and zero CI** — no `tests/` dir, no
+`.github/workflows/`, nothing in `requirements.txt` beyond fastapi/uvicorn/
+httpx. It's a live public service with no safety net; today's session found
+three real bugs by hand that a test suite would have caught or prevented
+from regressing.
+
+1. **pytest suite over all 7 `/api/*` routes** — `/api/projects`,
+   `/api/projects/{repo}/readme`, `/api/changelog`, `/api/changelog.rss`,
+   `/api/uptime`, `/api/health`, `/api/status`. Contract shape + happy/sad
+   paths. Generate via the `api-test-suite` skill, then review by hand.
+2. **Explicit regression tests for the two cache bugs fixed in Phase 0** —
+   the important one: a cold cache (no prior snapshot) plus a failing
+   GitHub call must schedule a retry ~30s out, *not* poison the cache for
+   the full 600s TTL. This is the bug that bit twice in one session; it
+   should be impossible to reintroduce silently.
+3. **Mock GitHub, don't call it.** Tests must not hit `api.github.com` —
+   the unauthenticated 60 req/hr budget was exhausted by manual testing
+   alone this session, and a CI run that burns it would be worse. Stub the
+   httpx client so rate-limit/failure paths are directly exercisable.
+4. **GitHub Actions workflow** — run the test suite and `docker compose
+   build` both images on every push and PR. The build step matters
+   independently: it catches Dockerfile/dependency breakage that tests
+   alone won't.
+5. **No auto-deploy step.** Deploy is a manual `docker compose up -d
+   --build` on Owen's own hardware and stays that way — see
+   `docs/adr/0001-ci-runs-tests-never-deploys.md`.
+
+## Phase 7 — Content & Integrations
+
+The remaining "Content & writing" and non-uptime "Integrations" items from
+`FEATURE_IDEAS.md`. Most of these are about *getting more real content onto
+the site automatically* rather than hand-writing it.
+
+1. **Per-project "why I built this" blurbs**, separate from the GitHub
+   description — the one thing the GitHub API genuinely can't provide.
+2. **Build-log posts tied to specific commits/milestones**, extending the
+   existing `blog.json` pattern.
+3. **Auto cross-post new changelog entries to Forgejo issues.** Note this
+   is the *opposite direction* from Phase 5's item 4 (which pulls Forgejo
+   activity *into* the changelog feed) — easy to confuse, worth keeping
+   straight when either is picked up.
+4. **Discord webhook** posting new changelog entries to a channel.
+5. **Auto-generated OG preview images per project card**, for link shares.
+6. **GitHub push webhooks instead of the 10-minute poll.** Doubles as
+   rate-limit relief and complements Phase 1 — near-real-time updates and
+   far fewer API calls.
+
+**Blocked on repo visibility** (do not build until/unless the underlying
+repos go public again — all four went private in the 2026-07-30 sweep):
+
+- `/vrchat` page and its live VRChat API status widget — needs `VRCATAPI`.
+- TMDB "currently trending" homepage widget — needs `Cap-s-Movie-List`.
+- `/gaming` page — needs `DXRULES` / `AI_SMF_CODE`.
+
+Listing these as blocked rather than dropping them, since visibility is a
+one-command change if that ever flips back.
+
+## Phase 8 — Data & Personalization
+
+The remaining stats and personalization items. Lower-stakes, mostly
+mechanical, batchable in one pass.
+
+1. **Combined star count** across every listed repo, and a "projects
+   shipped this year" counter, in the homepage hero.
+2. **Aggregate language breakdown chart** across the whole portfolio, via
+   GitHub's languages API.
+3. **Fork count, contributor count, and repo age** (`created_at`) badges —
+   contributor count shown honestly as 1 where that's the truth.
+4. **Font-size adjuster and high-contrast toggle.** Accessibility-adjacent
+   to Phase 5, but these are user-facing *controls* rather than semantic
+   markup — kept here deliberately so Phase 5 stays a focused a11y pass.
+5. **Live GitHub rate-limit-remaining indicator.** Directly motivated by
+   burning through the full 60 req/hr budget during this session's testing
+   with no visibility into it until things silently degraded. Most useful
+   before Phase 1's token work lands, and still useful after.
+6. **"Hub last updated" note** — meta, but honest.
+
+---
+
+## Suggested working order
+
+The phase numbers are filing order, not priority. Issues #2–#6 were already
+filed before Phase 6 was identified, and renumbering live issues for
+cosmetics isn't worth it. Recommended actual order:
+
+1. **Phase 1** (reliability) — the hub is one bad GitHub window from
+   degrading in front of a visitor.
+2. **Phase 6** (testing & CI) — lock in Phase 0's and Phase 1's fixes
+   before building anything new on top of them.
+3. **Phase 2** (uptime history) — the flagship feature ask.
+4. **Phases 3, 4, 5, 7, 8** — in whatever order suits; no hard
+   dependencies between them.
+
 ---
 
 Nothing past Phase 0 is built yet. Say which phase (or which numbered item
